@@ -32,6 +32,11 @@ jobs:
 
       - name: Verify plugin descriptor is inside the jar
         run: |
+          echo "=== Branch/commit di questa build ==="
+          echo "ref_name   : ${{ github.ref_name }}"
+          echo "head_ref   : ${{ github.head_ref || '(n/a)' }}"
+          echo "commit sha : ${{ github.sha }}"
+          echo "run number : ${{ github.run_number }}"
           echo "=== Contenuto di build/libs ==="
           ls -la build/libs/
           JAR=$(ls build/libs/*.jar | head -1)
@@ -45,9 +50,18 @@ jobs:
             exit 1
           fi
 
+      - name: Prepara nome artefatto univoco
+        id: artifact-name
+        shell: bash
+        run: |
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          BRANCH="${BRANCH//\//-}"
+          echo "name=TropicalCore-${BRANCH}-run${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          echo "Nome artefatto: TropicalCore-${BRANCH}-run${{ github.run_number }}"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: TropicalCore
+          name: ${{ steps.artifact-name.outputs.name }}
           path: build/libs/*.jar
           if-no-files-found: error
