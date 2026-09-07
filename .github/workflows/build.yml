@@ -30,6 +30,21 @@ jobs:
       - name: Build
         run: gradle build --no-daemon --stacktrace
 
+      - name: Verify plugin descriptor is inside the jar
+        run: |
+          echo "=== Contenuto di build/libs ==="
+          ls -la build/libs/
+          JAR=$(ls build/libs/*.jar | head -1)
+          echo "=== Contenuto del jar: $JAR ==="
+          unzip -l "$JAR"
+          echo "=== Verifica plugin.yml ==="
+          if unzip -l "$JAR" | grep -q "plugin.yml"; then
+            echo "OK: plugin.yml trovato alla radice del jar"
+          else
+            echo "ERRORE: plugin.yml NON presente nel jar!"
+            exit 1
+          fi
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:

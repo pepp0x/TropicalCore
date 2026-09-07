@@ -54,10 +54,16 @@ processResources {
     }
 }
 
+// Lo shadowJar sostituisce il jar normale (stesso nome, senza classifier).
+// Disabilitiamo il task `jar` per evitare due task che scrivono sullo stesso file.
 shadowJar {
     archiveClassifier.set('')
 }
 
-build {
+tasks.named('jar') {
+    enabled = false
+}
+
+tasks.named('build') {
     dependsOn shadowJar
 }
