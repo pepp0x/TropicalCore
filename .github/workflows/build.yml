@@ -1,0 +1,67 @@
+name: build
+
+on:
+  push:
+    branches: [ master, 'arena/**' ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (Java 21)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '9.4.0'
+
+      - name: Build
+        run: gradle build --no-daemon --stacktrace
+
+      - name: Verify plugin descriptor is inside the jar
+        run: |
+          echo "=== Branch/commit di questa build ==="
+          echo "ref_name   : ${{ github.ref_name }}"
+          echo "head_ref   : ${{ github.head_ref || '(n/a)' }}"
+          echo "commit sha : ${{ github.sha }}"
+          echo "run number : ${{ github.run_number }}"
+          echo "=== Contenuto di build/libs ==="
+          ls -la build/libs/
+          JAR=$(ls build/libs/*.jar | head -1)
+          echo "=== Contenuto del jar: $JAR ==="
+          unzip -l "$JAR"
+          echo "=== Verifica plugin.yml ==="
+          if unzip -l "$JAR" | grep -q "plugin.yml"; then
+            echo "OK: plugin.yml trovato alla radice del jar"
+          else
+            echo "ERRORE: plugin.yml NON presente nel jar!"
+            exit 1
+          fi
+
+      - name: Prepara nome artefatto univoco
+        id: artifact-name
+        shell: bash
+        run: |
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          BRANCH="${BRANCH//\//-}"
+          echo "name=TropicalCore-${BRANCH}-run${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          echo "Nome artefatto: TropicalCore-${BRANCH}-run${{ github.run_number }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.artifact-name.outputs.name }}
+          path: build/libs/*.jar
+          if-no-files-found: error

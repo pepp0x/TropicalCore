@@ -8,30 +8,80 @@ load: POSTWORLD
 
 authors: [ peppox ]
 
-depend: [ Vault, LuckPerms, WorldGuard ]
+depend: [ Vault ]
+softdepend: [ LuckPerms, WorldGuard ]
+
+permissions:
+  tropicalcore.admin.*:
+    description: Tutti i permessi amministrativi di TropicalCore
+    default: op
+    children:
+      tropicalcore.admin.cdi: true
+      tropicalcore.admin.lavoro: true
+  tropicalcore.admin.cdi:
+    description: Rilascia le Carte d'Identita RP
+    default: op
+  tropicalcore.admin.lavoro:
+    description: Assegna i lavori ai giocatori
+    default: op
+  tropicalcore.job.*:
+    description: Permessi dei singoli lavori
+    default: op
+    children:
+      tropicalcore.job.disoccupato: true
+      tropicalcore.job.polizia: true
+      tropicalcore.job.medico: true
+      tropicalcore.job.meccanico: true
+      tropicalcore.job.discoteca: true
+  tropicalcore.polizia.*:
+    description: Permessi per le Forze dell'Ordine
+    default: op
+    children:
+      tropicalcore.polizia.manette: true
+      tropicalcore.polizia.perquisisci: true
+      tropicalcore.polizia.scorta: true
+  tropicalcore.polizia.manette:
+    description: Ammanetta o sblocca un cittadino
+    default: op
+  tropicalcore.polizia.perquisisci:
+    description: Perquisisce l'inventario di un cittadino
+    default: op
+  tropicalcore.polizia.scorta:
+    description: Prende in scorta un cittadino ammanettato
+    default: op
+  tropicalcore.terreno.add:
+    description: Aggiunge membri al proprio terreno
+    default: true
+  tropicalcore.terreno.remove:
+    description: Rimuove membri dal proprio terreno
+    default: true
 
 commands:
   atm:
     description: Apre l'ATM per gestire il proprio saldo
     usage: /atm
+    aliases: [ bancomat, banca ]
   lavoro:
     description: Apre il pannello di gestione lavoro
     usage: /lavoro [set <nome>]
-    aliases: [job, jobs]
+    aliases: [ job, jobs ]
   trade:
     description: Scambia item e soldi con un altro giocatore
-    usage: /trade <player>
+    usage: /trade <player> | /trade accept | /trade deny | /trade money <importo>
+    aliases: [ scambia ]
   terreno:
     description: Gestisce l'acquisto e la registrazione dei terreni
-    usage: /terreno <compra|registra|info>
+    usage: /terreno <acquista|info|add|remove>
+    aliases: [ plot, land ]
   cdi:
-    description: Comando per gestire le Carte d'Identità RP
+    description: Comando per gestire le Carte d'Identita RP
     permission: tropicalcore.admin.cdi
     usage: /cdi give <giocatore>
+    aliases: [ cartaidentita ]
   manette:
-    description: Ammanetta o sbrama un cittadino
+    description: Ammanetta o sblocca un cittadino (senza argomenti consegna le manette)
     permission: tropicalcore.polizia.manette
-    usage: /manette <giocatore>
+    usage: /manette [giocatore]
   perquisisci:
     description: Perquisisce l'inventario di un cittadino
     permission: tropicalcore.polizia.perquisisci

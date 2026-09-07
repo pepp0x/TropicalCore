@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.peppox.tropicalcore.util.Testi;
 
 public class ScortaCommand implements CommandExecutor {
@@ -16,14 +17,19 @@ public class ScortaCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player poliziotto)) {
-            sender.sendMessage(Testi.colora("&cQuesto comando può essere eseguito solo in gioco."));
+            sender.sendMessage(Testi.colora("&cQuesto comando puo' essere eseguito solo in gioco."));
             return true;
         }
 
         if (!poliziotto.hasPermission("tropicalcore.polizia.scorta")) {
             poliziotto.sendMessage(Testi.colora("&cNon hai i permessi per scortare i cittadini."));
+            return true;
+        }
+
+        if (!poliziaManager.isPoliziotto(poliziotto)) {
+            poliziotto.sendMessage(Testi.colora("&cSolo un Agente di Polizia puo' scortare i cittadini."));
             return true;
         }
 
@@ -38,19 +44,24 @@ public class ScortaCommand implements CommandExecutor {
             return true;
         }
 
+        if (target.equals(poliziotto)) {
+            poliziotto.sendMessage(Testi.colora("&cNon puoi scortare te stesso."));
+            return true;
+        }
+
         if (!poliziaManager.isAmmanettato(target)) {
             poliziotto.sendMessage(Testi.colora("&cDevi ammanettare il cittadino prima di poterlo scortare!"));
             return true;
         }
 
-        if (poliziotto.getLocation().distance(target.getLocation()) > 5.0) {
-            poliziotto.sendMessage(Testi.colora("&cIl cittadino è troppo lontano per essere preso in scorta."));
+        if (poliziotto.getLocation().distance(target.getLocation()) > PoliziaManager.RAGGIO_SCORTA) {
+            poliziotto.sendMessage(Testi.colora("&cIl cittadino e' troppo lontano per essere preso in scorta."));
             return true;
         }
 
-        poliziaManager.toggleScorta(target, poliziotto);
+        boolean oraInScorta = poliziaManager.toggleScorta(poliziotto, target);
 
-        if (poliziaManager.isInScorta(target)) {
+        if (oraInScorta) {
             poliziotto.sendMessage(Testi.colora("&aStai scortando &e" + target.getName()));
             target.sendMessage(Testi.colora("&cL'agente &e" + poliziotto.getName() + " &cti sta scortando."));
         } else {

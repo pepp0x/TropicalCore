@@ -30,23 +30,23 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 0) {
-            mittente.sendMessage(Component.text("Uso corretto: /trade <giocatore> oppure /trade accept/deny", NamedTextColor.RED));
+            mittente.sendMessage(Component.text("Uso: /trade <giocatore> | /trade accept | /trade deny", NamedTextColor.RED));
             return true;
         }
 
-        String targetName = args[0];
+        String primo = args[0];
 
-        if (targetName.equalsIgnoreCase("accept")) {
+        if (primo.equalsIgnoreCase("accept") || primo.equalsIgnoreCase("accetta")) {
             tradeManager.accettaScambio(mittente);
             return true;
         }
 
-        if (targetName.equalsIgnoreCase("deny") || targetName.equalsIgnoreCase("refuse")) {
+        if (primo.equalsIgnoreCase("deny") || primo.equalsIgnoreCase("rifiuta") || primo.equalsIgnoreCase("refuse")) {
             tradeManager.rifiutaScambio(mittente);
             return true;
         }
 
-        Player destinatario = Bukkit.getPlayer(targetName);
+        Player destinatario = Bukkit.getPlayer(primo);
         if (destinatario == null || !destinatario.isOnline()) {
             mittente.sendMessage(Component.text("Giocatore non trovato o offline.", NamedTextColor.RED));
             return true;
@@ -65,10 +65,15 @@ public class TradeCommand implements CommandExecutor, TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            completions.add("accept");
-            completions.add("deny");
+            if ("accept".startsWith(args[0].toLowerCase())) {
+                completions.add("accept");
+            }
+            if ("deny".startsWith(args[0].toLowerCase())) {
+                completions.add("deny");
+            }
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (!player.getName().equalsIgnoreCase(sender.getName()) && player.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
+                if (!player.getName().equalsIgnoreCase(sender.getName())
+                        && player.getName().toLowerCase().startsWith(args[0].toLowerCase())) {
                     completions.add(player.getName());
                 }
             }

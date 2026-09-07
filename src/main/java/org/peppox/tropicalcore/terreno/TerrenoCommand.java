@@ -2,6 +2,7 @@ package org.peppox.tropicalcore.terreno;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,7 +37,7 @@ public class TerrenoCommand implements CommandExecutor, TabCompleter {
         String subCommand = args[0].toLowerCase();
 
         switch (subCommand) {
-            case "buy", "acquista" -> terrenoManager.acquistaTerreno(player);
+            case "buy", "acquista", "compra" -> terrenoManager.acquistaTerreno(player);
             case "info" -> terrenoManager.mostraInfoTerreno(player);
             case "add" -> {
                 if (args.length < 2) {
@@ -73,14 +74,23 @@ public class TerrenoCommand implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
+
         if (args.length == 1) {
-            List<String> subCommands = List.of("acquista", "info", "add", "remove");
+            List<String> subCommands = List.of("acquista", "compra", "info", "add", "remove");
             for (String sub : subCommands) {
                 if (sub.startsWith(args[0].toLowerCase())) {
                     completions.add(sub);
                 }
             }
+        } else if (args.length == 2 && (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove"))) {
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                if (!online.getName().equalsIgnoreCase(sender.getName())
+                        && online.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    completions.add(online.getName());
+                }
+            }
         }
+
         return completions;
     }
 }
