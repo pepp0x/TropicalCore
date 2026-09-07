@@ -1,0 +1,42 @@
+name: TropicalCore
+description: 'Plugin core per il server roleplay'
+version: '${version}'
+
+main: org.peppox.tropicalcore.TropicalCore
+api-version: '1.21'
+load: POSTWORLD
+
+authors: [ peppox ]
+
+depend: [ Vault, LuckPerms, WorldGuard ]
+
+commands:
+  atm:
+    description: Apre l'ATM per gestire il proprio saldo
+    usage: /atm
+  lavoro:
+    description: Apre il pannello di gestione lavoro
+    usage: /lavoro [set <nome>]
+    aliases: [job, jobs]
+  trade:
+    description: Scambia item e soldi con un altro giocatore
+    usage: /trade <player>
+  terreno:
+    description: Gestisce l'acquisto e la registrazione dei terreni
+    usage: /terreno <compra|registra|info>
+  cdi:
+    description: Comando per gestire le Carte d'Identità RP
+    permission: tropicalcore.admin.cdi
+    usage: /cdi give <giocatore>
+  manette:
+    description: Ammanetta o sbrama un cittadino
+    permission: tropicalcore.polizia.manette
+    usage: /manette <giocatore>
+  perquisisci:
+    description: Perquisisce l'inventario di un cittadino
+    permission: tropicalcore.polizia.perquisisci
+    usage: /perquisisci <giocatore>
+  scorta:
+    description: Prende in scorta un cittadino ammanettato
+    permission: tropicalcore.polizia.scorta
+    usage: /scorta <giocatore>
