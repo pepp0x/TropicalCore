@@ -3,7 +3,7 @@ package org.peppox.tropicalcore.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class EmojiParser {
+public final class EmojiParser {
 
     private static final Map<String, String> EMOJI = new LinkedHashMap<>();
 
@@ -25,12 +25,31 @@ public class EmojiParser {
         EMOJI.put(":attenzione:", "\u26A0\uFE0F");
         EMOJI.put(":warning:", "\u26A0\uFE0F");
         EMOJI.put(":poliziotto:", "\uD83D\uDC6E");
+        EMOJI.put(":police:", "\uD83D\uDC6E");
         EMOJI.put(":casa:", "\uD83C\uDFE0");
+        EMOJI.put(":home:", "\uD83C\uDFE0");
         EMOJI.put(":auto:", "\uD83D\uDE97");
+        EMOJI.put(":car:", "\uD83D\uDE97");
+        // Segnaposto usati dai documenti (Carta d'Identita)
+        EMOJI.put(":utente:", "\uD83D\uDC64");
+        EMOJI.put(":user:", "\uD83D\uDC64");
+        EMOJI.put(":lavoro:", "\uD83D\uDCBC");
+        EMOJI.put(":job:", "\uD83D\uDCBC");
+        EMOJI.put(":documento:", "\uD83E\uDEAA");
+        EMOJI.put(":card:", "\uD83E\uDEAA");
     }
 
+    private EmojiParser() {
+    }
+
+    /**
+     * Sostituisce tutti i segnaposto {@code :nome:} con l'emoji corrispondente.
+     * Ritorna {@code null} se l'input è {@code null}.
+     */
     public static String parse(String testo) {
-        if (testo == null || testo.isEmpty()) return testo;
+        if (testo == null || testo.isEmpty()) {
+            return testo;
+        }
 
         String risultato = testo;
         for (Map.Entry<String, String> entry : EMOJI.entrySet()) {

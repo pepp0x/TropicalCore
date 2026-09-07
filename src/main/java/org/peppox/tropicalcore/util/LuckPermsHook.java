@@ -2,9 +2,9 @@ package org.peppox.tropicalcore.util;
 
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
 import net.luckperms.api.node.types.InheritanceNode;
+import org.bukkit.Bukkit;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -13,19 +13,30 @@ public class LuckPermsHook {
 
     private LuckPerms luckPerms;
 
+    /**
+     * Inizializza l'hook. Ritorna {@code false} se LuckPerms non e' installato o non e' pronto.
+     * E' sicuro da chiamare anche quando LuckPerms manca (soft dependency).
+     */
     public boolean setup() {
+        if (Bukkit.getPluginManager().getPlugin("LuckPerms") == null) {
+            return false;
+        }
         try {
             this.luckPerms = LuckPermsProvider.get();
-            return true;
-        } catch (IllegalStateException e) {
-            // LuckPerms non è installato o non è ancora pronto
+            return this.luckPerms != null;
+        } catch (Throwable t) {
+            // LuckPerms presente ma non ancora pronto
             return false;
         }
     }
 
+    public boolean isReady() {
+        return luckPerms != null;
+    }
+
     /**
      * Aggiunge il player al gruppo specificato (es. "poliziotto"),
-     * mantenendo eventuali altri gruppi già presenti.
+     * mantenendo eventuali altri gruppi gia' presenti.
      */
     public CompletableFuture<Void> addToGroup(UUID playerUuid, String groupName) {
         return luckPerms.getUserManager().modifyUser(playerUuid, user -> {

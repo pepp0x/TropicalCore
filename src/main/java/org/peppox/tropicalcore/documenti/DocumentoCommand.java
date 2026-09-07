@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.peppox.tropicalcore.TropicalCore;
 import org.peppox.tropicalcore.util.Testi;
 
@@ -20,13 +21,11 @@ public class DocumentoCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(Testi.colora("&cQuesto comando può essere eseguito solo in gioco."));
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Testi.colora("&cQuesto comando puo' essere eseguito solo in gioco."));
             return true;
         }
-
-        Player player = (Player) sender;
 
         // Uso: /cdi give <giocatore>
         if (args.length >= 2 && args[0].equalsIgnoreCase("give")) {
@@ -49,8 +48,8 @@ public class DocumentoCommand implements CommandExecutor {
             ItemStack carta = documentoManager.creaCartaIdentita(target, lavoro);
             target.getInventory().addItem(carta);
 
-            target.sendMessage(Testi.colora("&aHai ricevuto la tua Carta d'Identità!"));
-            player.sendMessage(Testi.colora("&aCarta d'Identità consegnata con successo a &e" + target.getName()));
+            target.sendMessage(Testi.colora("&aHai ricevuto la tua Carta d'Identita!"));
+            player.sendMessage(Testi.colora("&aCarta d'Identita consegnata con successo a &e" + target.getName()));
             return true;
         }
 
