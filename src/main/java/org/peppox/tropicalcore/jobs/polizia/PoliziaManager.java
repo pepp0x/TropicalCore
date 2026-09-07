@@ -1,5 +1,6 @@
 package org.peppox.tropicalcore.jobs.polizia;
 
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +10,7 @@ import org.peppox.tropicalcore.jobs.JobManager;
 import org.peppox.tropicalcore.util.Testi;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -20,6 +22,9 @@ public class PoliziaManager {
     public static final double RAGGIO_MANETTE = 4.0;
     /** Raggio (in blocchi) entro cui il poliziotto puo' prendere in scorta un cittadino. */
     public static final double RAGGIO_SCORTA = 5.0;
+
+    /** Testo semplice dell'item manette, usato per riconoscerlo. */
+    private static final String NOME_MANETTE = "MANETTE";
 
     private static final ItemStack ITEM_MANETTE = creaManetteItem();
 
@@ -46,7 +51,10 @@ public class PoliziaManager {
             return false;
         }
         ItemMeta meta = item.getItemMeta();
-        return meta.hasDisplayName() && Testi.colora("&7&lMANETTE").equals(meta.getDisplayName());
+        if (!meta.hasDisplayName()) {
+            return false;
+        }
+        return NOME_MANETTE.equals(PlainTextComponentSerializer.plainText().serialize(meta.displayName()));
     }
 
     public boolean isPoliziotto(@NotNull Player player) {
@@ -118,10 +126,10 @@ public class PoliziaManager {
         ItemStack manette = new ItemStack(Material.IRON_INGOT);
         ItemMeta meta = manette.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Testi.colora("&7&lMANETTE"));
-            meta.setLore(java.util.List.of(
-                    Testi.colora("&8» &7Clicca destro su un cittadino"),
-                    Testi.colora("&8» &7per ammanettarlo o liberarlo.")
+            meta.displayName(Testi.componente("&7&lMANETTE"));
+            meta.lore(List.of(
+                    Testi.componente("&8» &7Clicca destro su un cittadino"),
+                    Testi.componente("&8» &7per ammanettarlo o liberarlo.")
             ));
             manette.setItemMeta(meta);
         }

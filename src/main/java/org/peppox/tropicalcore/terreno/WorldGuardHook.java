@@ -96,7 +96,7 @@ public class WorldGuardHook {
         BlockVector3 max = BlockVector3.at(centroX + RAGGIO, world.getMaxHeight() - 1, centroZ + RAGGIO);
         ProtectedCuboidRegion query = new ProtectedCuboidRegion("__tropicalcore_check__", min, max);
 
-        return regionManager.getApplicableRegions(query).isEmpty();
+        return regionManager.getApplicableRegions(query).size() == 0;
     }
 
     /**
